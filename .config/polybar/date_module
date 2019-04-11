@@ -1,0 +1,9 @@
+type = internal/date
+interval = 5
+label = %date%%{F-}%time%%{F-}
+date =
+date-alt = %A, %B %d, %Y  %
+time = %I:%M %p
+time-alt = ${self.time}
+
+
