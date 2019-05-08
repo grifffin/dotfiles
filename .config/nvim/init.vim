@@ -15,6 +15,7 @@ Plug 'tpope/vim-surround'
 " completion engine
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 Plug 'neoclide/coc-tsserver'
+Plug 'neoclide/coc-python'
 " wal colorscheme
 Plug 'dylanaraps/wal.vim'
 " minimal editing view

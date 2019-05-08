@@ -195,6 +195,12 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec_always --no-startup-id compton
 
 #
+# Keyboard stuff
+#
+# switches the backtick key so that it types tilde without shift
+exec_always --no-startup-id xmodmap -e "keycode 49 = asciitilde grave"
+
+#
 # Wal
 #
 exec_always --no-startup-id wal -R
