@@ -25,6 +25,9 @@ floating_modifier $mod
 # start a terminal
 bindsym $mod+Return exec kitty
 
+# screenshot
+bindsym Print exec --no-startup-id deepin-screenshot -f -s ~/pictures/screenshots/
+
 # kill focused window
 bindsym $mod+Shift+q kill
 

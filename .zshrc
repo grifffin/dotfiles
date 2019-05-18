@@ -23,6 +23,9 @@ source ~/.purepower
 # must be loaded before other keybindings
 bindkey -v #vim mode
 
+bindkey '^[[A' history-beginning-search-backward
+bindkey '^[[B' history-beginning-search-forward
+
 # auto cd
 setopt auto_cd
 
