@@ -1,21 +1,22 @@
 call plug#begin()
 " binds basic completion to tab
-Plug 'ajh17/vimcompletesme'
+" Plug 'ajh17/vimcompletesme'
 " syntax for like a million langs
 Plug 'sheerun/vim-polyglot'
 " js
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+" Plug 'pangloss/vim-javascript'
+" Plug 'mxw/vim-jsx'
 " async linting
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 " ui
 Plug 'itchyny/lightline.vim'
 
+" quickly comment out/in lines
+Plug 'tpope/vim-commentary'
+" adds support for targeting surrounding marks<Paste>
 Plug 'tpope/vim-surround'
 " completion engine
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-Plug 'neoclide/coc-tsserver'
-Plug 'neoclide/coc-python'
+Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
 " wal colorscheme
 Plug 'dylanaraps/wal.vim'
 " minimal editing view
@@ -24,8 +25,6 @@ Plug 'junegunn/goyo.vim'
 Plug 'alvan/vim-closetag'
 " file tree
 Plug 'scrooloose/nerdtree'
-" quickly comment out/in lines
-Plug 'scrooloose/nerdcommenter'
 " show git status in nerdtree
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'godlygeek/tabular'
@@ -41,17 +40,21 @@ let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_progname = 'nvr'
 
+
+""" wal
 colo wal
+
 
 """ lightline
 let g:lightline = {
       \ 'colorscheme': 'wal',
       \ }
 
+
 """ vimcompletesme
-set omnifunc=syntaxcomplete#Complete
+" set omnifunc=syntaxcomplete#Complete
 " closes the scratch window when a completion is selected
-autocmd CompleteDone * pclose
+" autocmd CompleteDone * pclose
 
 " searches across cases only if the search is all lowercase
 set smartcase
