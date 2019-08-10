@@ -1,16 +1,8 @@
 call plug#begin()
-" binds basic completion to tab
-" Plug 'ajh17/vimcompletesme'
 " syntax for like a million langs
 Plug 'sheerun/vim-polyglot'
-" js
-" Plug 'pangloss/vim-javascript'
-" Plug 'mxw/vim-jsx'
-" async linting
-" Plug 'w0rp/ale'
 " ui
 Plug 'itchyny/lightline.vim'
-
 " quickly comment out/in lines
 Plug 'tpope/vim-commentary'
 " adds support for targeting surrounding marks<Paste>
@@ -27,12 +19,34 @@ Plug 'alvan/vim-closetag'
 Plug 'scrooloose/nerdtree'
 " show git status in nerdtree
 Plug 'Xuyuanp/nerdtree-git-plugin'
+" easy text alignment with tabs
 Plug 'godlygeek/tabular'
 " tool for batch renaming files
 Plug 'qpkorr/vim-renamer'
 " LaTeX
 Plug 'lervag/vimtex'
+" floating preview window for completion (wait for new release
+" Plug 'ncm2/float-preview'
 call plug#end()
+
+""" Coc
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" lightline integration
+function! CocCurrentFunction()
+  return get(b:, 'coc_current_function', '')
+endfunction
 
 """ vimtex
 let g:polyglot_disabled = ['latex'] 
@@ -40,24 +54,37 @@ let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_progname = 'nvr'
 
-
 """ wal
 colo wal
 
-
 """ lightline
+" gets rid of the double INSERT
+set noshowmode
+
+" real config
 let g:lightline = {
       \ 'colorscheme': 'wal',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'cocstatus', 'currentfunction', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'cocstatus': 'coc#status',
+      \   'currentfunction': 'CocCurrentFunction'
+      \ },
       \ }
-
-
-""" vimcompletesme
-" set omnifunc=syntaxcomplete#Complete
-" closes the scratch window when a completion is selected
-" autocmd CompleteDone * pclose
 
 " searches across cases only if the search is all lowercase
 set smartcase
+
+" a lot of plugins use this
+set updatetime=300
+
+" Better display for messages
+set cmdheight=2
+
+" limit the completion popup height
+set pumheight=6
 
 " press <tab>, get two spaces
 set expandtab shiftwidth=2 smarttab
@@ -77,3 +104,11 @@ nnoremap <esc> :noh<return><esc>
 
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
+
+" langmaps for Colemak
+" Map Colemak keys to QWERTY keys in normal/visual modes.
+command Colemak set langmap=fpgjluyrstdneiokFPGJLUYRSTDNEIOK;ertyuiosdfgjklpnERTYUIOSDFGJKLPN
+" Map QWERTY keys to QWERTY keys in normal/visual modes.
+command Qwerty set langmap=""
+
+Colemak
