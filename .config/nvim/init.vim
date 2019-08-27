@@ -9,6 +9,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 " completion engine
 Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+Plug 'neoclide/coc-tsserver', {'tag': '1.3.7', 'do': 'yarn install --frozen-lockfile'}
 " wal colorscheme
 Plug 'dylanaraps/wal.vim'
 " minimal editing view
@@ -25,9 +26,17 @@ Plug 'godlygeek/tabular'
 Plug 'qpkorr/vim-renamer'
 " LaTeX
 Plug 'lervag/vimtex'
+" Color previews
+Plug 'RRethy/vim-hexokinase'
 " floating preview window for completion (wait for new release
 " Plug 'ncm2/float-preview'
 call plug#end()
+
+" maybe??
+" set termguicolors
+" set Vim-specific sequences for RGB colors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 """ Coc
 " Use tab for trigger completion with characters ahead and navigate.
@@ -80,7 +89,7 @@ set smartcase
 " a lot of plugins use this
 set updatetime=300
 
-" Better display for messages
+" Better display for messages (this only kinda works)
 set cmdheight=2
 
 " limit the completion popup height
@@ -112,3 +121,20 @@ command Colemak set langmap=fpgjluyrstdneiokFPGJLUYRSTDNEIOK;ertyuiosdfgjklpnERT
 command Qwerty set langmap=""
 
 Colemak
+
+" langremap breaks insert mode with Coc, but it has to be on for macros
+" make it off at startup and makes a mapping (\q) to toggle it
+set nolangremap
+
+function ToggleLangRemap()
+  if (&langremap)
+    set nolangremap
+    echo "nolangremap"
+  else
+    set langremap
+    echo "langremap"
+  endif
+endfunction
+
+" q is used because it isn't affected by the langmap
+:nnoremap <Leader>q :call ToggleLangRemap()<CR>
