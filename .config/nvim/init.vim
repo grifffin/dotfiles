@@ -9,7 +9,6 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 " completion engine
 Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
-Plug 'neoclide/coc-tsserver', {'tag': '1.3.7', 'do': 'yarn install --frozen-lockfile'}
 " wal colorscheme
 Plug 'dylanaraps/wal.vim'
 " minimal editing view
