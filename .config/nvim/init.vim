@@ -1,14 +1,20 @@
 call plug#begin()
 " syntax for like a million langs
 Plug 'sheerun/vim-polyglot'
+" highlight occurrences of word under cursor
+Plug 'dominikduda/vim_current_word'
 " ui
 Plug 'itchyny/lightline.vim'
 " quickly comment out/in lines
 Plug 'tpope/vim-commentary'
 " adds support for targeting surrounding marks<Paste>
 Plug 'tpope/vim-surround'
+" more motions
+Plug 'easymotion/vim-easymotion'
 " completion engine
 Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+" prettier
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 " wal colorscheme
 Plug 'dylanaraps/wal.vim'
 " minimal editing view
@@ -26,16 +32,31 @@ Plug 'qpkorr/vim-renamer'
 " LaTeX
 Plug 'lervag/vimtex'
 " Color previews
-Plug 'RRethy/vim-hexokinase'
-" floating preview window for completion (wait for new release
-" Plug 'ncm2/float-preview'
+Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
+" floating preview window for completion (wait for new release)
+Plug 'ncm2/float-preview'
 call plug#end()
+
+set mouse=a
+" keeps the selection after indenting
+vnoremap < <gv
+vnoremap > >gv
 
 " maybe??
 " set termguicolors
 " set Vim-specific sequences for RGB colors
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+" easymotion
+" changes the prefix from \\ to \
+map <Leader> <Plug>(easymotion-prefix)
+" characters the word motion to be bi-directional
+map <Leader>w <Plug>(easymotion-bd-w)
+map <Leader>f <Plug>(easymotion-bd-f)
+map <Leader>t <Plug>(easymotion-bd-t)
+map s         <Plug>(easymotion-s2)
+
 
 """ Coc
 " Use tab for trigger completion with characters ahead and navigate.
@@ -55,6 +76,11 @@ endfunction
 function! CocCurrentFunction()
   return get(b:, 'coc_current_function', '')
 endfunction
+
+" mappings
+map <Leader>c <Plug>(coc-fix-current)
+map <Leader>n <Plug>(coc-diagnostic-next)
+map <Leader>N <Plug>(coc-diagnostic-prev)
 
 """ vimtex
 let g:polyglot_disabled = ['latex'] 
@@ -89,7 +115,7 @@ set smartcase
 set updatetime=300
 
 " Better display for messages (this only kinda works)
-set cmdheight=2
+set cmdheight=1
 
 " limit the completion popup height
 set pumheight=6
@@ -110,30 +136,8 @@ nnoremap <esc> :noh<return><esc>
 " is this cool?
 :nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 
+" NERDTree
+" show dots
+let NERDTreeShowHidden=1
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
-
-" langmaps for Colemak
-" Map Colemak keys to QWERTY keys in normal/visual modes.
-command Colemak set langmap=fpgjluyrstdneiokFPGJLUYRSTDNEIOK;ertyuiosdfgjklpnERTYUIOSDFGJKLPN
-" Map QWERTY keys to QWERTY keys in normal/visual modes.
-command Qwerty set langmap=""
-
-Colemak
-
-" langremap breaks insert mode with Coc, but it has to be on for macros
-" make it off at startup and makes a mapping (\q) to toggle it
-set nolangremap
-
-function ToggleLangRemap()
-  if (&langremap)
-    set nolangremap
-    echo "nolangremap"
-  else
-    set langremap
-    echo "langremap"
-  endif
-endfunction
-
-" q is used because it isn't affected by the langmap
-:nnoremap <Leader>q :call ToggleLangRemap()<CR>
