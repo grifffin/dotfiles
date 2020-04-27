@@ -1,13 +1,17 @@
 call plug#begin()
 " syntax for like a million langs
 Plug 'sheerun/vim-polyglot'
+" syntax for jsx
+Plug 'MaxMEllon/vim-jsx-pretty'
 " highlight occurrences of word under cursor
 Plug 'dominikduda/vim_current_word'
 " ui
 Plug 'itchyny/lightline.vim'
+" git gutter
+Plug 'https://github.com/airblade/vim-gitgutter'
 " quickly comment out/in lines
 Plug 'tpope/vim-commentary'
-" adds support for targeting surrounding marks<Paste>
+" adds support for targeting surrounding marks
 Plug 'tpope/vim-surround'
 " more motions
 Plug 'easymotion/vim-easymotion'
@@ -17,6 +21,10 @@ Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 " wal colorscheme
 Plug 'dylanaraps/wal.vim'
+" candid colorscheme
+Plug 'flrnd/candid.vim'
+" space-vim colorscheme
+Plug 'liuchengxu/space-vim-theme'
 " minimal editing view
 Plug 'junegunn/goyo.vim'
 " HTML/XML tag auto-close
@@ -37,16 +45,18 @@ Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'ncm2/float-preview'
 call plug#end()
 
+" mouse control
 set mouse=a
+
 " keeps the selection after indenting
 vnoremap < <gv
 vnoremap > >gv
 
-" maybe??
+" maybe a fix for hexokinase
 " set termguicolors
 " set Vim-specific sequences for RGB colors
-let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+" let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+" let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " easymotion
 " changes the prefix from \\ to \
@@ -88,16 +98,16 @@ let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_progname = 'nvr'
 
-""" wal
-colo wal
+""" colorscheme
+" if you change this remember to change the lightline config too
+colorscheme space_vim_theme
 
 """ lightline
 " gets rid of the double INSERT
 set noshowmode
 
-" real config
 let g:lightline = {
-      \ 'colorscheme': 'wal',
+      \ 'colorscheme': 'space_vim_theme',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'cocstatus', 'currentfunction', 'readonly', 'filename', 'modified' ] ]
