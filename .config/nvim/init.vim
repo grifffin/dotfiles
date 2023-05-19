@@ -1,16 +1,34 @@
-" vimtex {{{
+" vim" vimtex {{{
 let g:polyglot_disabled = ['latex']
 " }}}
 " plugin installs {{{
 call plug#begin()
-" syntax for like a million langs
-Plug 'sheerun/vim-polyglot'
+" manager of LSPs, formatters, linters, etc.
+Plug 'williamboman/mason.nvim' 
+Plug 'williamboman/mason-lspconfig.nvim'
+" LSP configs
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+" debugger
+Plug 'puremourning/vimspector'
+" tree-sitter; parsing
+Plug 'nvim-treesitter/nvim-treesitter'
+" rust tools
+Plug 'simrat39/rust-tools.nvim'
 " syntax for jsx
 Plug 'MaxMEllon/vim-jsx-pretty'
 " highlight occurrences of word under cursor
 Plug 'dominikduda/vim_current_word'
 " ui
 Plug 'itchyny/lightline.vim'
+" dev icons
+Plug 'kyazdani42/nvim-web-devicons'
+" warnings in a box
+Plug 'folke/trouble.nvim'
 " git gutter
 Plug 'airblade/vim-gitgutter'
 " quickly comment out/in lines
@@ -21,101 +39,61 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 " more motions
 Plug 'easymotion/vim-easymotion'
-" completion engine
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" prettier
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-" wal colorscheme
-Plug 'dylanaraps/wal.vim'
-" candid colorscheme
-Plug 'flrnd/candid.vim'
-" space-vim colorscheme
-Plug 'liuchengxu/space-vim-theme'
+" better word-based motions
+Plug 'bkad/CamelCaseMotion'
+" gruvbox theme
+Plug 'ellisonleao/gruvbox.nvim'
 " minimal editing view
 Plug 'junegunn/goyo.vim'
 " HTML/XML tag auto-close
 Plug 'alvan/vim-closetag'
 " file tree
-Plug 'scrooloose/nerdtree'
-" show git status in nerdtree
-Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'nvim-tree/nvim-tree.lua'
 " easy text alignment with tabs
 Plug 'godlygeek/tabular'
 " tool for batch renaming files
 Plug 'qpkorr/vim-renamer'
 " LaTeX
 Plug 'lervag/vimtex'
-" Color previews
-Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
-" floating preview window for completion (wait for new release)
-Plug 'ncm2/float-preview'
 call plug#end()
 " }}}
-" easymotion {{{
-" changes the prefix from \\ to \
-map <Leader> <Plug>(easymotion-prefix)
-" characters the word motion to be bi-directional
-map <Leader>w <Plug>(easymotion-bd-w)
-map <Leader>f <Plug>(easymotion-bd-f)
-map <Leader>t <Plug>(easymotion-bd-t)
-map s         <Plug>(easymotion-s2)
+" mason {{{
+lua << EOF
+require("mason").setup()
+EOF
 " }}}
-" CoC {{{
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" rust {{{
+lua << EOF
+local rt = require("rust-tools")
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" CoC lightline integration
-function! CocCurrentFunction()
-  return get(b:, 'coc_current_function', '')
-endfunction
-
-" CoC mappings
-map <Leader>c <Plug>(coc-fix-current)
-map <Leader>n <Plug>(coc-diagnostic-next)
-map <Leader>N <Plug>(coc-diagnostic-prev)
+rt.setup({
+  server = {
+    on_attach = function(_, bufnr)
+      -- Hover actions
+      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+      -- Code action groups
+      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+    end,
+  },
+})
+EOF
 " }}}
 " vimtex {{{
 let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_progname = 'nvr'
 " }}}
-" colorscheme {{{
-" if you change this remember to change the lightline config too
-colorscheme wal
-" }}}
 " lightline {{{
 " gets rid of the double INSERT
 set noshowmode
 
 let g:lightline = {
-      \ 'colorscheme': 'wal',
+      \ 'colorscheme': 'gruvbox',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'cocstatus', 'currentfunction', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'cocstatus': 'coc#status',
-      \   'currentfunction': 'CocCurrentFunction'
+      \             [ 'currentfunction', 'readonly', 'filename', 'modified' ] ]
       \ },
       \ }
-" }}}
-" NERDTree {{{
-
-" show dots
-let NERDTreeShowHidden=1
-" Add spaces after comment delimiters by default
-let g:NERDSpaceDelims = 1
-
 " }}}
 " mappings {{{
 
@@ -126,7 +104,17 @@ let mapleader=" "
 " keeps the selection after indenting
 vnoremap < <gv
 vnoremap > >gv
-"
+
+" replace word mappings with camelcase ones
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+map <silent> ge <Plug>CamelCaseMotion_ge
+sunmap w
+sunmap b
+sunmap e
+sunmap ge
+
 " exit insert mode in the terminal with esc
 tnoremap <Esc> <C-\><C-n>
 
@@ -136,9 +124,26 @@ nnoremap <esc> :noh<return><esc>
 " is this cool?
 :nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 
-" " }}}
-" editor {{{
+" toggle relative line numbers
+nnoremap <Leader>n :set rnu!<CR>
 
+let g:vimspector_enable_mappings = 'HUMAN'
+
+map <Leader>N :NvimTreeToggle<CR>
+
+" }}}
+" easymotion {{{
+" changes the prefix from <space><space> to <space>
+map <Leader> <Plug>(easymotion-prefix)
+" characters the word motion to be bi-directional
+nmap <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>t <Plug>(easymotion-bd-t)
+nmap s         <Plug>(easymotion-s2)
+" }}}
+" editor {{{
+set background=dark
+colorscheme gruvbox
 " mouse control
 set mouse=a
 
@@ -154,13 +159,92 @@ set cmdheight=1
 " limit the completion popup height
 set pumheight=6
 
+" start with folds open
+set foldlevel=99
+
 " press <tab>, get two spaces
 set expandtab shiftwidth=2 smarttab
 
-" turn hybrid line numbers on
-:set number relativenumber
-:set nu rnu
+" turn line numbers on
+:set nu
 
+lua << EOF
+require("nvim-tree").setup()
+require("trouble").setup() 
+EOF
+" }}}
+" cmp {{{
+set completeopt=menuone,noinsert,noselect,preview
+lua << EOF
+local cmp = require'cmp'
+local types = require'cmp.types'
+cmp.setup({
+  preselect = types.cmp.PreselectMode.None,
+  mapping = {
+        ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+      end
+    end, { "i", "s" }),
+
+    ["<S-Tab>"] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+        feedkey("<Plug>(vsnip-jump-prev)", "")
+      end
+    end, { "i", "s" }),
+  },
+  sources = {
+    { name = 'path' },                              -- file paths
+    { name = 'nvim_lsp', keyword_length = 3 },      -- from language server
+    { name = 'nvim_lsp_signature_help'},            -- display function signatures with current parameter emphasized
+    { name = 'nvim_lua', keyword_length = 2},       -- complete neovim's Lua runtime API such vim.lsp.*
+    { name = 'buffer', keyword_length = 2 },        -- source current buffer
+    { name = 'vsnip', keyword_length = 2 },         -- nvim-cmp source for vim-vsnip 
+    { name = 'calc'},                               -- source for math calculation
+  },
+  window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
+  },
+  formatting = {
+      fields = {'menu', 'abbr', 'kind'},
+      format = function(entry, item)
+          local menu_icon ={
+              nvim_lsp = 'λ',
+              vsnip = '⋗',
+              buffer = 'Ω',
+              path = '🖫',
+          }
+          item.menu = menu_icon[entry.source.name]
+          return item
+      end,
+  },
+})
+EOF
+" }}}
+" tree-sitter {{{
+lua << EOF
+require('nvim-treesitter.configs').setup {
+  ensure_installed = { "lua", "rust", "toml" },
+  auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting=false,
+  },
+  ident = { enable = true }, 
+  rainbow = {
+    enable = true,
+    extended_mode = true,
+    max_file_lines = nil,
+  }
+}
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+EOF
 " }}}
 " enables folding in this file {{{
 " vim:fdm=marker
